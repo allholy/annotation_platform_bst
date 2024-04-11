@@ -1,0 +1,77 @@
+{% extends 'classurvey/base.html' %}
+{% load dict_key %}
+
+{% block content %}
+
+<div class="container-main">
+    <div class="card">
+        <div class="card-header">
+            <h1>Familiarization with the taxonomy</h1>
+            <div class="center">
+                Below is the taxonomy we have designed. Please, spend <b>4-5 minutes</b> looking at the top-level categories, the sub categories and their definition and examples to get familiar with them.
+                Note that later during the categorization phase, you'll still be able to see all available taxonomy categories. Category definitions and examples will also be available by hovering over the categories' names.
+            </div>  
+        </div>
+
+        <div class="card-body">
+            <div class="container">
+                <div class="d-none d-md-block titles">
+                    <div class="row">
+                        <div class="col-md-3 d-flex align-items-center">
+                            Top-level category
+                        </div>
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    Sub category
+                                </div>
+                                <div class="col-md-8">
+                                    Definition and examples
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr style="border: 2px solid rgb(20, 10, 40);">
+
+                {% for top_level, class_data in level_group.items %}
+                <div class="row">
+                    <div class="col-md-3 d-flex text-center align-items-center">
+                        <div style="width: 100%"> 
+                            <div><h3>{{ top_level }}</h3></div>
+                            <div class="examples">{{ top_level_description|dict_key:top_level }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-9"> 
+                        {% for subclass in class_data %}
+                        <div class="row">
+                            <div class="col-md-4">
+                                <span class="d-md-none">* </span><span>{{ subclass.class_name }} </span>
+                            </div>
+                            <div class="col-md-8">
+                                <div>
+                                    {{ subclass.description }}
+                                </div>
+                                <div class="examples">
+                                    {% if subclass.examples != "" %}
+                                        Examples: {{ subclass.examples }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% if not forloop.last %}
+                    <hr>
+                {% endif %}
+                {% endfor %}
+                <div class="center" style="margin-top: 20px;">
+                    <a href="{% url 'classurvey:user_details' %}" class="btn btn-dark">Continue to the next phase</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

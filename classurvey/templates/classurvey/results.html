@@ -1,0 +1,21 @@
+{% extends 'classurvey/base.html' %}
+
+{% block content %}
+
+<div style="max-width: 60%; margin: 0 auto;">
+    <h3 class="center"> Results </h3>
+    <p> Total answered sounds count: {{ all_data_count }} </p>
+    <p> User count: {{ user_count }} </p>
+    <p> Total individual answers: {{ total_answers }} </p>
+    <p> Total completed answers: {{ completed_groups }} ({{ uncompleted_groups }} not finished) </p>  
+    <p> Answers by group:
+        <ul>
+            {% for group, count in group_counts.items %}
+                <li>group {{ group }}: {{ count }}</li>
+            {% endfor %}
+        </ul>
+    </p>    
+
+</div>
+
+{% endblock content %}

@@ -1,0 +1,29 @@
+{% extends 'classurvey/base.html' %}
+
+{% block content %}
+
+<div class="pos-end">
+    <div class="brd">
+        <h3> 
+            No more sounds to categorize!
+        </h3>
+        <p>
+            You have already categorized all the sounds included in the experiment so you can't repeat the experiment any more.
+            <br>Thank you for your massive contribution :)
+        </p>
+    </div>
+</div>
+
+<!-- 
+<div class="cache">
+    <div>
+        If you got here by accident, click
+    </div>
+    <form action="" method="post">
+        {% csrf_token %}
+        <button type="submit" name="clear_session_cache" class="btn btn-sm btn-link">here</button>
+    </form>
+</div> 
+-->
+
+{% endblock content %}
