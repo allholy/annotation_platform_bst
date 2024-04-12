@@ -212,8 +212,7 @@ def user_details_view(request):
         form = UserDetailsForm(initial=stored_user_details)
     return render(request, 'classurvey/user_details.html', {'form': form})
 
-
-# test one question
+# annotate one sound
 def annotate_sound_view(request):
 
     user_id = user_id_from_request(request)
@@ -289,33 +288,52 @@ def count_groups_complete(request):
     finished_count = len(distinct_surveys) - unfinished_count
     return finished_count, unfinished_count
 
-# @login_required
+@login_required
 def results_view(request):
     data = SoundAnswer.objects.values(
         'test_sound__sound_id', 'user_id', 
         'test_sound__sound_class', 'test_sound__sound_group', 'chosen_class', 
     )
+    # Total number of annotated sounds
     all_data_count = data.count()
-    # user count, 
-    user_count = len(set(d['user_id'] for d in data.distinct())) #data.distinct('user_id').count()
-    total_answers_data = data.values('test_sound__sound_group', 'user_id')
-    total_answers = total_answers_data.annotate(count=Count('id', distinct=True)).count()
-    group_counts = total_answers_data.distinct()
-    group_counts = dict(Counter(d['test_sound__sound_group'] for d in group_counts))
+
+    # Retrieve and count the number of "SND" sounds (not in Freesound)
+    snd_sounds = SoundAnswer.objects.filter(comment__icontains="SND")
+    snd_count = snd_sounds.count()
+    # Annotated sounds without SND
+    annotations_cleaned = all_data_count-snd_count
+
+    # User count
+    user_count = len(set(d['user_id'] for d in data.distinct()))
+    # total_answers_data = data.values('test_sound__sound_group', 'user_id')
+
+    # Completed groups (and if any uncompleted)
     completed_groups, uncompleted_groups = count_groups_complete(request)
 
+    # Grouping by class in annotation
+    total_answers_data = data.values('chosen_class')
+    total_answers_data = total_answers_data.annotate(class_count=Count('chosen_class'))
+    # Dictionary of sound class names and class counts
+    class_counts = {item['chosen_class']: item['class_count'] for item in total_answers_data}
+
+    # Sort the classes based on the order specified in class_order
+    # TODO
+    # class_order = ... # order as in choices
+    # class_counts = {key: class_counts.get(key, 0) for key in class_order}
+
     return render(request, 'classurvey/results.html',  {
-        'all_data_count':all_data_count, 'user_count':user_count, 
-        'total_answers':total_answers, 'group_counts':group_counts, 
+        'snd_sounds':snd_count, 'annotations_cleaned':annotations_cleaned,
+        'user_count':user_count, 'class_counts':class_counts,
         'completed_groups':completed_groups, 'uncompleted_groups':uncompleted_groups
     })
 
-# @login_required
+@login_required
 def export_view(request):
     data = {
-        'sound_answers': [(sa.user_id, sa.test_sound.sound_id, sa.chosen_class, sa.confidence, sa.confidence, sa.date_created) for sa in SoundAnswer.objects.all()],
+        'sound_answers': [(sa.user_id, sa.test_sound.sound_id, sa.chosen_class, sa.confidence, sa.comment, sa.date_created) for sa in SoundAnswer.objects.all()],
         'user_details': [(ud.user_id, ud.ip_address, ud.user_name, ud.date_created) for ud in UserDetailsModel.objects.all()],
     }
     r = JsonResponse(data)
     r['Content-Disposition'] = 'attachment; filename=data.json'
     return r
+

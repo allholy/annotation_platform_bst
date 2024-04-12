@@ -4,18 +4,16 @@
 
 <div style="max-width: 60%; margin: 0 auto;">
     <h3 class="center"> Results </h3>
-    <p> Total answered sounds count: {{ all_data_count }} </p>
+    <p> Total annotated sounds: {{ annotations_cleaned }} (excluded {{ snd_sounds }} sounds not in Freesound) </p>
     <p> User count: {{ user_count }} </p>
-    <p> Total individual answers: {{ total_answers }} </p>
-    <p> Total completed answers: {{ completed_groups }} ({{ uncompleted_groups }} not finished) </p>  
-    <p> Answers by group:
+    <p> Completed groups: {{ completed_groups }} ({{ uncompleted_groups }} not finished) </p>  
+    <p> Annotations by class:
         <ul>
-            {% for group, count in group_counts.items %}
-                <li>group {{ group }}: {{ count }}</li>
+            {% for class, count in class_counts.items %}
+                <li>{{ class }}: {{ count }}</li>
             {% endfor %}
         </ul>
     </p>    
-
 </div>
 
 {% endblock content %}
