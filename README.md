@@ -1,4 +1,4 @@
-# Platform for taxonomy experiment. 
+# Platform for taxonomy annotation. 
 
 This repository contains the source code of the annotation platform for the Broad Sound Taxonomy.
 
