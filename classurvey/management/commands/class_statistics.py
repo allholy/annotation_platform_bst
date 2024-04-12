@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from classurvey.models import TestSound, SoundAnswer
+from classurvey.models import SoundAnswer
 
 import pandas as pd
 import seaborn as sb

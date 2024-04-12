@@ -1,5 +1,5 @@
 from django import forms
-from .models import SoundAnswer, ExitInfoModel, UserDetailsModel, ClassChoice
+from .models import SoundAnswer, UserDetailsModel, ClassChoice
 
 
 class SoundAnswerForm(forms.ModelForm):
@@ -11,13 +11,15 @@ class SoundAnswerForm(forms.ModelForm):
 
     class Meta:
         model = SoundAnswer
-        fields = ('chosen_class', 'confidence')
+        fields = ('chosen_class', 'confidence','comment')
         labels = {
             'chosen_class': 'Which is the most suitable category for this sound?',
-            'confidence': 'How confident are you about your answer?'
+            'confidence': 'How confident are you about your answer?',
+            'comment': 'Anything to add?'
         }
         widgets = {
             'confidence': forms.RadioSelect,
+            'comment': forms.Textarea(attrs={'class': 'textarea-comment'}),
         }
 
 
@@ -25,30 +27,10 @@ class UserDetailsForm(forms.ModelForm):
 
     class Meta:
         model = UserDetailsModel
-        exclude = ['user_id','ip_address']
+        fields = ('user_name',)
         labels = {
-            'q1':'Are you a Freesound user?',
-            'q2':'If so, how many sounds have you uploaded (approximately)?',
-            'q3':'Do you have experience with audio/music technology?',
-            'q4':'Do you have experience as a musician?',
-            'q5':'Which of these areas have you practiced (if any)?',
+            'user_name': 'Username:'
         }
         widgets = {
-            'q1': forms.RadioSelect,
-            'q2': forms.NumberInput(attrs={'min':0,'max':49999}),
-            'q3': forms.RadioSelect,
-            'q4': forms.RadioSelect,
-            'q5': forms.CheckboxSelectMultiple,
+            'user_name': forms.Textarea(attrs={'class': 'textarea-username'}),
         }
-
-
-class ExitInfoForm(forms.ModelForm):
-    answer = forms.CharField(
-        widget=forms.Textarea(attrs={'class': 'textarea'}), 
-        label='Thanks for annotating all sounds! Please use the space below to optionally provide any additional feedback that you might want to share about the taxonomy.',
-        required=False
-    )
-
-    class Meta:
-        model = ExitInfoModel
-        exclude = ['user_id']

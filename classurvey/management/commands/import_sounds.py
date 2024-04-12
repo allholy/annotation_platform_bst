@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from classurvey.models import TestSound, ClassChoice
+from classurvey.models import TestSound
 
 import csv
 import os
@@ -36,6 +36,4 @@ def import_sounds_csv(file_path):
                 sound_id=row['ID'],
                 sound_class=row['Class'],
                 sound_group=row['Group'],
-                sound_difficulty=row['Level'],
-                sound_name=row['FileNameModified'],
             )

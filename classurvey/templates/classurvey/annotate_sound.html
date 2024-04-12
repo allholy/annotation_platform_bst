@@ -7,7 +7,7 @@
 <div class="container-main">
     <div class="card card-question">
         <div class="card-header">
-            <h1>Sound annotation [{{ answered_sounds_size }} / {{ all_sounds_size }}]</h1>
+            <h2>Sound annotation [{{ answered_sounds_size }} / {{ all_sounds_size }}]</h2>
         </div>
         <div class="card-body">
             
@@ -15,16 +15,21 @@
                 {% csrf_token %}
                 <input type="hidden" name="test_sound_id" value="{{ test_sound.id }}">
                 <fieldset>
-                    <div class="center">
-                        <h5>{{ filename }}</h5>
-                    </div>
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-12 d-none d-md-block">
                             <div class="center">
                                 <div class="encoder_iframe_wrapper">
-                                    <iframe id="encoder_iframe" frameborder="0" scrolling="no" class="iframe-layout"></iframe>
+                                    <iframe id="encoder_iframe" frameborder="0" scrolling="no" width="481" height="86"></iframe>
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-12 d-md-none">
+                            <div class="center">
+                                <div class="encoder_iframe_wrapper">
+                                    <iframe id="encoder_iframe_small" frameborder="0" scrolling="no" width="375" height="30"></iframe>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="class-label">
@@ -81,18 +86,24 @@
                             </div>
                         </div>
                     </div>
-                    
+
+                    <div class="comment-label">
+                        {{form.comment.label}}
+                    </div>
+                    <div class="error-class">
+                        {{form.comment.errors}}
+                    </div>
+                    <div class="box-feedback">
+                        {{form.comment}}
+                    </div>
+
                     <div class="center" style="margin:30px 0px;">
                         {% if answered_sounds_size != all_sounds_size %}
                         <input type="submit" class="btn btn-dark" value="Continue with the next sound">
                         {% else %}
-                        <input type="submit" class="btn btn-dark" value="Continue to the next phase">
+                        <input type="submit" class="btn btn-dark" value="Finish">
                         {% endif %}
                     </div>
-                </div>
-                <div class="card-footer tip">
-                    Tip: If you're doubting between two categories, choose the one you think fits best. <br>
-                    Tip: If you select the sub category "other", make sure you choose it from the correct top-level category.
                 </div>
             </fieldset>
         </form>
@@ -102,8 +113,8 @@
 </div>
 
 <script>
-    var iframe = document.getElementById('encoder_iframe')
-    iframe.src="https://freesound.org/embed/sound/iframe/{{ test_sound.sound_id }}/simple/full_size_no_info/"
+    document.getElementById('encoder_iframe').src="https://freesound.org/embed/sound/iframe/{{ test_sound.sound_id }}/simple/medium/"
+    document.getElementById('encoder_iframe_small').src="https://freesound.org/embed/sound/iframe/{{ test_sound.sound_id }}/simple/small/"
 </script>
 
 

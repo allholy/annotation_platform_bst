@@ -1,0 +1,19 @@
+{% extends 'classurvey/base.html' %}
+
+{% block content %}
+
+<div class="pos-end">
+    <div class="brd">
+        <h3> 
+            Thank you for your annotation!
+        </h3>
+        <p>
+            Your answers have been submitted and recorded successfully and you can now safely close this page.
+            If you want to <b>repeat and categorize a different set of sounds</b>, please click the button below.
+        </p>
+
+        <a href="{% url 'classurvey:home' %}" class="btn btn-dark btn-sm button-end">Annotate more</a>
+    </div>
+</div>
+
+{% endblock content %}

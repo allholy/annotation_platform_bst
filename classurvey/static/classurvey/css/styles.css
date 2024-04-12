@@ -28,7 +28,7 @@ legend {
 
 footer {
     color: grey;
-    margin: 10px 0px;
+    /* margin: 10px 0px; */
 }
 
 .errorlist li {
@@ -55,6 +55,15 @@ footer {
 
 .error-confidence li:after {
     content: " Please choose your confidence level.";
+}
+
+.error-username {
+    position: relative;
+    margin: 10px 0px;
+}
+
+.error-username li:after {
+    content: " Please enter your username.";
 }
 
 .invisible-link {
@@ -94,6 +103,7 @@ footer {
     background-color: #fffff5ee;
     color: #333;
     padding: 20px;
+    text-align: center;
 }
 
 .card-body {
@@ -157,6 +167,13 @@ footer {
     margin: 10px 20px;
 }
 
+.comment-label {
+    text-align: center;
+    text-decoration: underline;
+    /* font-weight: bold; */
+    margin: 20px 0px -20px 0px;
+}
+
 .horizontal-radio {
     display: flex;
     justify-content: center;
@@ -177,15 +194,6 @@ footer {
     white-space: nowrap;
 }
 
-.tip {
-    font-size: 11pt;
-    text-align: center;
-}
-
-.checkbox {
-    margin-top: 50px;
-}
-
 .titles {
     font-size: 15pt;
 }
@@ -195,11 +203,14 @@ footer {
     margin-bottom: 15px;
 }
 
-.textarea {
-    width: 80%;
-    height: 200px;
-    box-sizing: border-box; 
-    margin:30px;
+.textarea-comment {
+    width: 40%;
+    height: 30px;
+}
+
+.textarea-username {
+    width: 30%;
+    height: 30px;
 }
 
 .box-feedback {
@@ -288,7 +299,7 @@ footer {
 
 
 /* Responsive styles */
-@media screen and (max-width: 900px) { 
+@media screen and (max-width: 830px) { 
     .container-main {
         width: 90%;
     }
@@ -298,7 +309,7 @@ footer {
     }
 
     .encoder_iframe_wrapper {
-        width: 320px;
+        width: 450px;
     }
 
     .iframe-layout {

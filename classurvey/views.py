@@ -7,8 +7,8 @@ from django.utils import timezone
 
 from collections import Counter
 
-from .models import SoundAnswer, TestSound, ClassChoice, UserDetailsModel, ExitInfoModel, TopLevel
-from .forms import SoundAnswerForm, UserDetailsForm, ExitInfoForm
+from .models import SoundAnswer, TestSound, ClassChoice, UserDetailsModel, TopLevel
+from .forms import SoundAnswerForm, UserDetailsForm
 
 import random
 
@@ -54,44 +54,32 @@ def assign_group(request, user_id):
     ''' 
     Assign one group to the user and save it to the session.
     '''
-    # see on the table how many groups exist.
-    available_groups = TestSound.objects.values_list(
-        'sound_group', flat=True).distinct()
-    # groups done from the same user. if it is empty, none are done.
-    groups_already_done_user = SoundAnswer.objects.filter(user_id=user_id).values_list(
+    # How many groups exist.
+    available_groups = TestSound.objects.values_list('sound_group', flat=True).distinct()
+    # Groups assigned to anyone.
+    all_assigned_groups = SoundAnswer.objects.values_list(
         'test_sound__sound_group', flat=True).distinct()
-    print(f"Answered groups from user: {groups_already_done_user}")
+    # Groups already assigned to the user. If it is empty, none are done.
+    # groups_already_done_user = SoundAnswer.objects.filter(user_id=user_id).values_list(
+    #     'test_sound__sound_group', flat=True).distinct()
+    print(f"Number of available groups: {len(available_groups)}")
+    print(f"Annotated groups: {len(all_assigned_groups)}")
 
-    # select group that is less annotated in total answers AND not done from the same user
-    if not len(groups_already_done_user) == len(available_groups): # if not all groups from user are done, select a group.
-        remaining_groups_user = set(available_groups) - set(groups_already_done_user)
-
-        # see which group is less annotated from all answers
-        count_per_group = SoundAnswer.objects.values('test_sound__sound_group').annotate(
-            count=Count('test_sound__sound_group')).order_by('count')
-        # size of groups in all answers
-        answered_groups_count = count_per_group.count()
-        # print(count_per_group,answered_groups_count)
-
-        if answered_groups_count == len(available_groups): # if True, all groups are in all the answers
-            less_annotated_group = count_per_group.first()
-            selected_group = less_annotated_group['test_sound__sound_group'] 
-            if not selected_group in remaining_groups_user: # if the less annotated is already answered, choose random
-                selected_group = random.choice(list(remaining_groups_user))
-        elif answered_groups_count == 0: # if ZERO answers are given yet
-            selected_group = random.choice(list(remaining_groups_user))
-            print("No answers yet.")
-        else: # if True, some groups are answered yet (still unanswered groups)
-            answered_groups = SoundAnswer.objects.values_list('test_sound__sound_group', flat=True).distinct()
-            available_groups = remaining_groups_user - set(answered_groups)
-            selected_group = random.choice(list(available_groups))
-
+    # Retrieve group from session, if any
+    selected_group = request.session.get('group_number', None)
+    # Find the first unassigned group to anyone.
+    remaining_groups = list(set(available_groups) - set(all_assigned_groups))
+    # Assign a group
+    if remaining_groups:
+        # Select next group
+        selected_group = remaining_groups[0]  # random.choice(remaining_groups)
         request.session['group_number'] = selected_group
         request.session['sound_order'] = None
-        print(f"Current group: {selected_group}")
+        print(f"Selected group: {selected_group}")
         return selected_group
-    else: # if user finished all groups
-        # when done, redirect to a page that says they tested all sounds.
+    else:
+        # All groups have been assigned, redirect to a page that says they are no more for now.
+        print(f"No more groups")
         return 'done'
 
 def get_next_sound_for_user(request):
@@ -167,24 +155,24 @@ def home_view(request):
                 elif action == 'restart': 
                     # discard popup and redirect to start experiment
                     group = assign_group(request, user_id)
-                    if 'done' == group: return redirect(reverse('classurvey:group_end'))
+                    if 'done' == group: return redirect(reverse('classurvey:data_end'))
                     return render(request, 'classurvey/home.html', {'show_popup': False})
             else: # if not finished and not press button
                 return render(request, 'classurvey/home.html', {'show_popup': True})
         else: # if prev is complete
             group = assign_group(request, user_id)
-            if 'done' == group: return redirect(reverse('classurvey:group_end'))
+            if 'done' == group: return redirect(reverse('classurvey:data_end'))
             return render(request, 'classurvey/home.html', {'show_popup': False})
     else: # if it first time
         group = assign_group(request, user_id)
         return render(request, 'classurvey/home.html', {'show_popup': False})
 
-def group_end_view(request):
+def data_end_view(request):
     if request.method == 'POST':
         if 'clear_session_cache' in request.POST:
             request.session.flush()
             return redirect('classurvey:home')
-    return render(request, 'classurvey/group_end.html')
+    return render(request, 'classurvey/data_end.html')
 
 def instructions_view(request):
     return render(request, 'classurvey/instructions.html')
@@ -247,10 +235,11 @@ def annotate_sound_view(request):
                 existing_sound_answer.date_created = timezone.now()
                 existing_sound_answer.chosen_class = form.cleaned_data['chosen_class']
                 existing_sound_answer.confidence = form.cleaned_data['confidence']
+                existing_sound_answer.comment = form.cleaned_data['comment']
                 existing_sound_answer.save()
             else: 
                 sound_answer = form.save(commit=False)
-                sound_answer.test_sound_id = request.POST.get('test_sound_id') # sound id_not FS id
+                sound_answer.test_sound_id = request.POST.get('test_sound_id') # sound id, not FS id
                 sound_answer.user_id = user_id
                 sound_answer.save()
             # print(f'number of answers {SoundAnswer.objects.count()}')
@@ -258,31 +247,18 @@ def annotate_sound_view(request):
     else:
         test_sound = get_next_sound_for_user(request)
         if test_sound is None:
-            return redirect(reverse('classurvey:exit_info'))
+            return redirect(reverse('classurvey:batch_end'))
         form = SoundAnswerForm()
    
-    filename = test_sound.sound_name
-
     return render(request, 'classurvey/annotate_sound.html', {
         'test_sound': test_sound, 'form': form,
-        'all_sounds_size': all_sounds_size, 'answered_sounds_size': current_sound_number, 'filename': filename,
+        'all_sounds_size': all_sounds_size, 'answered_sounds_size': current_sound_number,
         'class_titles': {class_key: get_class_tooltip(class_description, class_example) for class_key, class_description, class_example in get_test_descriptions()}
     })
 
-def exit_info_view(request):
-    if request.method == 'POST':
-        form = ExitInfoForm(request.POST)
-        if form.is_valid():
-            response = form.save(commit=False)
-            response.user_id = request.session['user_id']
-            response.save()
-            return redirect(reverse('classurvey:end'))
-    else:
-        form = ExitInfoForm()
-    return render(request, 'classurvey/exit_info.html', {'form': form})
 
-def end_view(request):
-    return render(request, 'classurvey/end_page.html')
+def batch_end_view(request):
+    return render(request, 'classurvey/batch_end.html')
 
 def informed_consent_view(request):
     return render(request, 'classurvey/informed_consent.html')
@@ -313,13 +289,14 @@ def count_groups_complete(request):
     finished_count = len(distinct_surveys) - unfinished_count
     return finished_count, unfinished_count
 
-@login_required
+# @login_required
 def results_view(request):
     data = SoundAnswer.objects.values(
         'test_sound__sound_id', 'user_id', 
         'test_sound__sound_class', 'test_sound__sound_group', 'chosen_class', 
     )
     all_data_count = data.count()
+    # user count, 
     user_count = len(set(d['user_id'] for d in data.distinct())) #data.distinct('user_id').count()
     total_answers_data = data.values('test_sound__sound_group', 'user_id')
     total_answers = total_answers_data.annotate(count=Count('id', distinct=True)).count()
@@ -333,12 +310,11 @@ def results_view(request):
         'completed_groups':completed_groups, 'uncompleted_groups':uncompleted_groups
     })
 
-@login_required
+# @login_required
 def export_view(request):
     data = {
-        'sound_answers': [(sa.user_id, sa.test_sound.sound_id, sa.chosen_class, sa.confidence, sa.date_created) for sa in SoundAnswer.objects.all()],
-        'user_details': [(ud.user_id, ud.ip_address, ud.q1, ud.q2, ud.q3, ud.q4, ud.date_created) for ud in UserDetailsModel.objects.all()],
-        'written_answers': [(ei.user_id, ei.answer, ei.date_created) for ei in ExitInfoModel.objects.all()],
+        'sound_answers': [(sa.user_id, sa.test_sound.sound_id, sa.chosen_class, sa.confidence, sa.confidence, sa.date_created) for sa in SoundAnswer.objects.all()],
+        'user_details': [(ud.user_id, ud.ip_address, ud.user_name, ud.date_created) for ud in UserDetailsModel.objects.all()],
     }
     r = JsonResponse(data)
     r['Content-Disposition'] = 'attachment; filename=data.json'

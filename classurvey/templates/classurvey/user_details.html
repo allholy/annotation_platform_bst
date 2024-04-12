@@ -5,42 +5,36 @@
 <div class="container-main">
     <div class="card">
         <div class="card-header">
-            <h1>Demographic questions</h1>
+            <h1>Annotator data</h1>
         </div>
         <div class="card-body">
             <form method="post" novalidate>
                 {% csrf_token %}
-                <div class="details">
+                <div class="details center">
+                        
+                    <div class="error-username">
+                        {{ form.user_name.errors }}
+                    </div>
+                    <div>
+                        {{ form.user_name.label }}
+                    </div>
+                    <div>
+                        {{ form.user_name }}
+                    </div>
+                    
                     <br>
-                    {{ form.as_p}}
+                    Look <a href="{% url 'classurvey:instructions' %}">the instructions</a>
                     <br><br>
+                    Revise <a href="{% url 'classurvey:taxonomy' %}"> taxonomy</a>
+                    <br><br><br>
+
                     <div class="center">
-                        <input type="submit" class="btn btn-dark" value="Start categorizing sounds">
+                        <input type="submit" class="btn btn-dark" value="Start annotating sounds">
                     </div>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-<script>
-    const q1RadioOptions = document.getElementsByName('q1');
-    const numSoundsInputField = document.getElementsByName('q2')[0];
-
-    const setNumSoundsInputVisibility = () => {
-        numSoundsInputField.disabled = !q1RadioOptions[0].checked
-        if (numSoundsInputField.disabled) {
-            numSoundsInputField.value = ''
-        }
-    }
-
-    setNumSoundsInputVisibility()
-
-    q1RadioOptions.forEach((element) => {
-        element.addEventListener('change', (event) => {
-            setNumSoundsInputVisibility();
-        })
-    })
-</script>
 
 {% endblock content %}
