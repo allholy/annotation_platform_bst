@@ -270,6 +270,7 @@ def count_groups_complete(request):
     Check if each user for each group has completed all the questions in survey.
     '''
     unfinished_count = 0
+    unfinished_groups = []
 
     data = SoundAnswer.objects.values('user_id','test_sound__sound_group')
     distinct_surveys = data.values('user_id', 'test_sound__sound_group').distinct()
@@ -284,11 +285,12 @@ def count_groups_complete(request):
 
         if not total_sounds_size == answers_count:
             unfinished_count += 1
+            unfinished_groups.append(group_number)
 
-    finished_count = len(distinct_surveys) - unfinished_count
-    return finished_count, unfinished_count
+        finished_count = len(distinct_surveys) - unfinished_count
+        return finished_count, unfinished_count, unfinished_groups
 
-@login_required
+# @login_required
 def results_view(request):
     data = SoundAnswer.objects.values(
         'test_sound__sound_id', 'user_id', 
@@ -308,7 +310,7 @@ def results_view(request):
     # total_answers_data = data.values('test_sound__sound_group', 'user_id')
 
     # Completed groups (and if any uncompleted)
-    completed_groups, uncompleted_groups = count_groups_complete(request)
+    completed_groups, uncompleted_groups, uncompleted_group_names = count_groups_complete(request)
 
     # Grouping by class in annotation
     total_answers_data = data.values('chosen_class')
@@ -316,15 +318,20 @@ def results_view(request):
     # Dictionary of sound class names and class counts
     class_counts = {item['chosen_class']: item['class_count'] for item in total_answers_data}
 
-    # Sort the classes based on the order specified in class_order
-    # TODO
-    # class_order = ... # order as in choices
-    # class_counts = {key: class_counts.get(key, 0) for key in class_order}
+    # Correct count for ss-other (substract the SND)
+    ssother_count_corrected = class_counts.get('ss-other', 0) - snd_count
+    class_counts['ss-other'] = max(ssother_count_corrected, 0)
+
+    # Sort the classes based on the original order 
+    # order od sound classes as in choices
+    class_order = list(ClassChoice.objects.values_list('class_key', flat=True))
+    class_counts = {key: class_counts.get(key, 0) for key in class_order}
 
     return render(request, 'classurvey/results.html',  {
         'snd_sounds':snd_count, 'annotations_cleaned':annotations_cleaned,
         'user_count':user_count, 'class_counts':class_counts,
-        'completed_groups':completed_groups, 'uncompleted_groups':uncompleted_groups
+        'completed_groups':completed_groups, 'uncompleted_groups':uncompleted_groups,
+        'uncompleted_group_names': uncompleted_group_names
     })
 
 @login_required

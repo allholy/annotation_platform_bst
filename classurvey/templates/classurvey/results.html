@@ -6,7 +6,7 @@
     <h3 class="center"> Results </h3>
     <p> Total annotated sounds: {{ annotations_cleaned }} (excluded {{ snd_sounds }} sounds not in Freesound) </p>
     <p> User count: {{ user_count }} </p>
-    <p> Completed groups: {{ completed_groups }} ({{ uncompleted_groups }} not finished) </p>  
+    <p> Completed groups: {{ completed_groups }} ({{ uncompleted_groups }} not finished -> group number {{ uncompleted_group_names }}) </p>  
     <p> Annotations by class:
         <ul>
             {% for class, count in class_counts.items %}
