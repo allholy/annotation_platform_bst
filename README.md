@@ -32,4 +32,8 @@ If you want to run an interactive python shell:
 
 `docker-compose run --rm app python manage.py shell_plus`
 
+To import sounds that have been already annotated, run 
+`docker-compose run --rm app python manage.py import_sounds_with_annotations /code/classurvey/data/<filename>`.
+Be careful not to import groups that have the same group number with the existing ones. 
+
 To expand your sounds for annotation with additional sound groups (post-initial deployment), simply create a new file named `sounds.csv` and import it too (4c). These new sounds will be added alongside the existing ones. 
