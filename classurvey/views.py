@@ -336,10 +336,26 @@ def results_view(request):
 
 @login_required
 def export_view(request):
-    data = {
-        'sound_answers': [(sa.user_id, sa.test_sound.sound_id, sa.chosen_class, sa.confidence, sa.comment, sa.date_created) for sa in SoundAnswer.objects.all()],
-        'user_details': [(ud.user_id, ud.ip_address, ud.user_name, ud.date_created) for ud in UserDetailsModel.objects.all()],
-    }
+    sound_annotations = []
+    for sa in SoundAnswer.objects.all():
+        user_details = UserDetailsModel.objects.filter(user_id=sa.user_id).first()
+        if user_details:
+            user_name = user_details.user_name
+        else:
+            user_name = ""
+        
+        sound_annotations.append((
+            sa.user_id, 
+            user_name,  
+            sa.test_sound.sound_id, 
+            sa.test_sound.sound_class,
+            sa.chosen_class, 
+            sa.confidence, 
+            sa.comment, 
+            sa.date_created
+        ))
+    data = {'sound_annotations': sound_annotations}
+
     r = JsonResponse(data)
     r['Content-Disposition'] = 'attachment; filename=data.json'
     return r
