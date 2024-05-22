@@ -312,6 +312,10 @@ def results_view(request):
     # Completed groups (and if any uncompleted)
     completed_groups, uncompleted_groups, uncompleted_group_names = count_groups_complete(request)
 
+    # Retrieve the number of unique groups and compute the number of the non-annotated ones
+    all_groups = TestSound.objects.values_list('sound_group', flat=True).distinct()
+    remaining_groups = len(all_groups) - completed_groups
+
     # Grouping by class in annotation
     total_answers_data = data.values('chosen_class')
     total_answers_data = total_answers_data.annotate(class_count=Count('chosen_class'))
@@ -330,8 +334,8 @@ def results_view(request):
     return render(request, 'classurvey/results.html',  {
         'snd_sounds':snd_count, 'annotations_cleaned':annotations_cleaned,
         'user_count':user_count, 'class_counts':class_counts,
-        'completed_groups':completed_groups, 'uncompleted_groups':uncompleted_groups,
-        'uncompleted_group_names': uncompleted_group_names
+        'completed_groups':completed_groups, 'remaining_groups':remaining_groups,
+        'uncompleted_groups':uncompleted_groups, 'uncompleted_group_names': uncompleted_group_names
     })
 
 @login_required
