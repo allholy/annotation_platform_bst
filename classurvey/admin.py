@@ -4,8 +4,12 @@ from . import models
 
 
 class SoundAnswerAdmin(admin.ModelAdmin):
-    list_display = ('user_id','chosen_class','confidence','comment','date_created')
-    list_filter = ['date_created']
+    list_display = ('test_sound_sound_id','user_id','chosen_class','confidence','comment','date_created')
+    list_filter = ['chosen_class']
+    def test_sound_sound_id(self, obj):
+        return obj.test_sound.sound_id
+    test_sound_sound_id.admin_order_field = 'test_sound_sound_id'
+    test_sound_sound_id.short_description = 'Freesound ID'
 
 class UserDetailsAdmin(admin.ModelAdmin):
     list_display = ('user_name','user_id','ip_address','date_created')
