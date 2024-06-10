@@ -338,15 +338,14 @@ def results_view(request):
         'uncompleted_groups':uncompleted_groups, 'uncompleted_group_names': uncompleted_group_names
     })
 
-@login_required
-def export_view(request):
+def data_for_export():
     sound_annotations = []
     for sa in SoundAnswer.objects.all():
         user_details = UserDetailsModel.objects.filter(user_id=sa.user_id).first()
         if user_details:
             user_name = user_details.user_name
         else:
-            user_name = ""
+            user_name = ''
         
         sound_annotations.append((
             sa.user_id, 
@@ -358,8 +357,11 @@ def export_view(request):
             sa.comment, 
             sa.date_created
         ))
-    data = {'sound_annotations': sound_annotations}
+    return {'sound_annotations': sound_annotations}
 
+@login_required
+def export_view(request):
+    data = data_for_export()
     r = JsonResponse(data)
     r['Content-Disposition'] = 'attachment; filename=data.json'
     return r
