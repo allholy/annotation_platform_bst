@@ -14,8 +14,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         current_date = datetime.now().strftime('%y%m%d')
-        file_path = f'/code/classurvey/data/data_{current_date}.json'
-        print(file_path)
+        file_path = f'/data-share/data_{current_date}.json'
         data = data_for_export()
         
         # Serialize datetime objects to strings
