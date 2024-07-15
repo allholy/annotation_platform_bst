@@ -33,7 +33,7 @@ def import_sounds_csv(file_path):
         reader = csv.DictReader(csvfile)
         for row in reader:
             sound, _ = TestSound.objects.get_or_create(
-                sound_id=row['ID'],
-                sound_class=row['Class'],
-                sound_group=row['Group'],
+                sound_id=row['sound_id'],
+                sound_class=row['class'],
+                sound_group=row['group'],
             )
