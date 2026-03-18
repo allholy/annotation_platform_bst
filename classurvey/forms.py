@@ -32,5 +32,5 @@ class UserDetailsForm(forms.ModelForm):
             'user_name': 'Username:'
         }
         widgets = {
-            'user_name': forms.Textarea(attrs={'class': 'textarea-username'}),
+            'user_name': forms.TextInput(attrs={'class': 'textarea-username', 'autocomplete': 'off'}),
         }
