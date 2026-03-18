@@ -216,7 +216,9 @@ def user_details_view(request):
 def annotate_sound_view(request):
 
     user_id = user_id_from_request(request)
-    group_number = request.session['group_number']
+    group_number = request.session.get('group_number', None)
+    if group_number is None:
+        return redirect(reverse('classurvey:data_end'))
 
     all_sounds_size, answered_sounds_size = sounds_sizes(request, group_number)
     current_sound_number = answered_sounds_size + 1
