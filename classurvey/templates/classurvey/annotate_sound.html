@@ -41,30 +41,35 @@
                         {% for option in form.chosen_class %}
                         {% if option.data.value == "m-sp" %}
                         <div class="col-12 col-lg-4 offset-lg-2">
-                            <div class="topclass-names">
-                                MUSIC
+                            <div class="mytooltip">
+                                <span class="tooltiptext tooltip-top-cat">{{ class_titles|dict_key:"m"|safe }}</span>
+                                <div class="topclass-names">MUSIC</div>
                             </div>
                             {% elif option.data.value == "is-p" %}
-                            <div class="topclass-names">
-                                INSTRUMENT SAMPLES
+                            <div class="mytooltip">
+                                <span class="tooltiptext tooltip-top-cat">{{ class_titles|dict_key:"is"|safe }}</span>
+                                <div class="topclass-names">INSTRUMENT SAMPLES</div>
                             </div>
                             {% elif option.data.value == "sp-s" %}
-                            <div class="topclass-names">
-                                SPEECH
+                            <div class="mytooltip">
+                                <span class="tooltiptext tooltip-top-cat">{{ class_titles|dict_key:"sp"|safe }}</span>
+                                <div class="topclass-names">SPEECH</div>
                             </div>
                             {% elif option.data.value == "fx-o" %}
                         </div>
                         <div class="col-12 col-lg-4 offset-lg-1">
-                            <div class="topclass-names">
-                                SOUND EFFECTS
+                            <div class="mytooltip">
+                                <span class="tooltiptext tooltip-top-cat">{{ class_titles|dict_key:"fx"|safe }}</span>
+                                <div class="topclass-names">SOUND EFFECTS</div>
                             </div>
                             {% elif option.data.value == "ss-n" %}
-                            <div class="topclass-names">
-                                SOUNDSCAPES
+                            <div class="mytooltip">
+                                <span class="tooltiptext tooltip-top-cat">{{ class_titles|dict_key:"ss"|safe }}</span>
+                                <div class="topclass-names">SOUNDSCAPES</div>
                             </div>
                             {% endif %}
                             <div class="myradio mytooltip">
-                                <span class="tooltiptext">{{ class_titles|dict_key:option.data.value }}</span>
+                                <span class="tooltiptext">{{ class_titles|dict_key:option.data.value|safe }}</span>
                                 {{ option }}
                             </div>
                             {% endfor %}

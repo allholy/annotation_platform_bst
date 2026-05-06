@@ -280,10 +280,15 @@ footer {
     text-align: center;
     padding:10px;
     border-radius: 6px;
+    text-align:left;
    
     /* Position the tooltip text - see examples below! */
     position: absolute;
     z-index: 1;
+}
+
+.tooltip-top-cat {
+    background-color: rgb(141, 141, 141)!important;
 }
 
 .mytooltip .tooltiptext {
@@ -315,4 +320,8 @@ footer {
     .iframe-layout {
         height: 90px;
     }
+}
+
+label {
+    cursor: pointer;
 }

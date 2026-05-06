@@ -127,15 +127,28 @@ def check_group_complete(request, group_number):
         completed = True
     return completed
 
-def get_test_descriptions():
+def get_test_descriptions(include_top_level=False):
     ''' Get descriptions for each category. '''
-    test_choices = ClassChoice.objects.values_list(
-        'class_key', 'description', 'examples')
+    test_choices = list(ClassChoice.objects.values_list(
+        'class_key', 'description', 'examples'))
+    
+    if include_top_level:
+        # Include hard-coded top-level descriptions
+        top_level_descriptions= {
+            'm': 'Music excerpts, including melodies, singing, loops, fillers, drones and short musical snippets.',
+            'is': 'Single notes from musical instruments, various versions of the same note, and scales.',
+            'sp': 'Sounds where human voice is prominent.',
+            'fx': 'Isolated sound effects or sound events, each happening one at a time.',
+            'ss': 'Ambiances, field-recordings with multiple events and sound environments.'
+        }
+        test_choices += [(class_key, top_level_descriptions.get(class_key, ''), '') for class_key in top_level_descriptions]
+        
+
     return test_choices
 
 def get_class_tooltip(class_description, class_example):
     if class_example:
-        return f'{class_description} Examples: {class_example}'
+        return f'{class_description}<br><br><i>Examples</i>: {class_example}'
     else:
         return f'{class_description}'
 
@@ -254,7 +267,7 @@ def annotate_sound_view(request):
     return render(request, 'classurvey/annotate_sound.html', {
         'test_sound': test_sound, 'form': form,
         'all_sounds_size': all_sounds_size, 'answered_sounds_size': current_sound_number,
-        'class_titles': {class_key: get_class_tooltip(class_description, class_example) for class_key, class_description, class_example in get_test_descriptions()}
+        'class_titles': {class_key: get_class_tooltip(class_description, class_example) for class_key, class_description, class_example in get_test_descriptions(include_top_level=True)}
     })
 
 
