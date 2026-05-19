@@ -21,7 +21,7 @@ class ClassChoice(models.Model):
         return f"<ClassChoice {self.class_name}>"
 
 class TopLevel(models.Model):
-    top_level_name = models.CharField(max_length=10)
+    top_level_name = models.CharField(max_length=255)
     top_level_description = models.CharField(max_length=255)
 
     def __str__(self):
