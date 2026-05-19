@@ -26,6 +26,14 @@ class TopLevel(models.Model):
 
     def __str__(self):
         return f"<TopLevel {self.top_level_name}>"
+
+
+class TopLevelEdgeCase(models.Model):
+    top_level = models.ForeignKey(TopLevel, on_delete=models.CASCADE, related_name='edge_cases')
+    definition = models.TextField()
+
+    def __str__(self):
+        return f"<TopLevelEdgeCase {self.top_level.top_level_name}: {self.definition[:50]}>"
     
 class SoundAnswer(models.Model):
     user_id = models.CharField(max_length=50)  # random generate

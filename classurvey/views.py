@@ -7,7 +7,7 @@ from django.utils import timezone
 
 from collections import Counter
 
-from .models import SoundAnswer, TestSound, ClassChoice, UserDetailsModel, TopLevel
+from .models import SoundAnswer, TestSound, ClassChoice, UserDetailsModel, TopLevel, TopLevelEdgeCase
 from .forms import SoundAnswerForm, UserDetailsForm
 
 import random
@@ -195,24 +195,15 @@ def taxonomy_view(request):
     top_levels = ClassChoice.objects.values_list('top_level',flat=True).distinct()
     level_group = {}
     top_level_description = {}
+    top_level_edge_cases_definitions = {}
+
     for top_level in top_levels:
         rows = ClassChoice.objects.filter(top_level=top_level)
         level_group[top_level] = list(rows)    
-        top_level_description[top_level] = TopLevel.objects.get(top_level_name=top_level).top_level_description
-
-    # NOTE: for now we hardcode this here, but this should be loaded from some CSV file in DB
-    top_level_edge_cases_definitions = {
-        "Music": [
-            "Multiple instruments (m-m) is used when two or more distinct musical sources are present in the audio, including acoustic instruments, electronic instruments (e.g. synths, drum machines), or a mix of both, even if they belong to the same type (e.g. two pianos or multiple synth layers), as long as they function as separate musical parts or sound sources.", 
-            "Beatbox is classified as Music solo instrument (m-si) when it functions as a vocal instrument with melodic or broader musical elements beyond pure rhythm, and as Music solo percussion (m-sp) when it consists only of rhythmic or percussive vocal sounds resembling drums. It is not classified as Multiple instruments (m-m), since it originates from a single performer and vocal source, even when imitating multiple instruments.", 
-            "Music (m) is used for structured musical content over time (e.g. melodies, rhythms, harmonies, or compositions), while Instrument samples (is) is used for isolated instrument material such as single notes, one chords, and repetitive notes."
-        ],
-        "Sound effects": [
-            "Machines (fx-m) is used for a machine or mechanical system with internal operation that produces sound (e.g. drill, lawn mower, clock mechanism), while Objects (fx-o) is used for standalone objects activated through external interaction (e.g. door, drawer, handheld tool), even when they contain small internal moving parts.", 
-            "Locomotion sounds (e.g. walking, running) remain in Human (fx-h) even if performed on natural or object surfaces (e.g. leaves, wood), as the primary sound source and action is human movement. However, non-locomotion interactions where the contacted material dominates the sound (e.g. brushing leaves as a distinct event or knocking door) should be classified under Objects (fx-o) or Natural (fx-n) depending on context, as the focus is on the interacted material.", 
-            "Weather sounds (e.g. rain) are classified as Natural (fx-n) when isolated or clearly identifiable events, and as Soundscapes (ss) when they form a continuous environment with overlapping (e.g. wind, traffic) or diffuse sources that cannot be separated."
-        ],
-    }
+        top_level_object = TopLevel.objects.filter(top_level_name=top_level).first()
+        top_level_description[top_level] = top_level_object.top_level_description 
+        edge_cases = top_level_object.edge_cases.all().values_list('definition', flat=True)
+        top_level_edge_cases_definitions[top_level] = list(edge_cases) 
 
     return render(request, 'classurvey/taxonomy.html', {
         'level_group': level_group, 'top_level_description':top_level_description, 'top_level_edge_cases_definitions': top_level_edge_cases_definitions
