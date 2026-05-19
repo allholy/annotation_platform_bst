@@ -15,20 +15,23 @@
 
         <div class="card-body">
             <div class="container">
-                <div class="d-none d-md-block titles">
+                <div class="d-none d-xl-block titles">
                     <div class="row">
-                        <div class="col-md-3 d-flex align-items-center">
+                        <div class="col-xl-2 d-flex align-items-center">
                             Top-level category
                         </div>
-                        <div class="col-md-9">
+                        <div class="col-xl-6">
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-xl-4">
                                     Sub category
                                 </div>
-                                <div class="col-md-8">
+                                <div class="col-xl-8">
                                     Definition and examples
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-xl-4">
+                            Edge cases and clarifications
                         </div>
                     </div>
                 </div>
@@ -36,19 +39,19 @@
 
                 {% for top_level, class_data in level_group.items %}
                 <div class="row">
-                    <div class="col-md-3 d-flex text-center align-items-center">
+                    <div class="col-xl-2 d-flex text-center">
                         <div style="width: 100%"> 
                             <div><h3>{{ top_level }}</h3></div>
                             <div class="examples">{{ top_level_description|dict_key:top_level }}</div>
                         </div>
                     </div>
-                    <div class="col-md-9"> 
+                    <div class="col-xl-6"> 
                         {% for subclass in class_data %}
                         <div class="row">
-                            <div class="col-md-4">
-                                <span class="d-md-none">* </span><span>{{ subclass.class_name }} </span>
+                            <div class="col-xl-4">
+                                <span class="d-xl-none">* </span><span>{{ subclass.class_name }} </span>
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-xl-8">
                                 <div>
                                     {{ subclass.description }}
                                 </div>
@@ -60,6 +63,22 @@
                             </div>
                         </div>
                         {% endfor %}
+                    </div>
+                    <div class="col-xl-4">
+                        {% with top_level_edge_cases_definitions|dict_key:top_level as edge_cases%}
+                        {% if edge_cases %}
+                        <div class="d-xl-none" style="margin-bottom:20px;">
+                            <i>Edge cases and clarifications:</i>
+                        </div>
+                        <ul>
+                        {% for edge_case in edge_cases %}
+                            <li class="edge-case">
+                                {{ edge_case }}
+                            </li>
+                        {% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% endwith %}
                     </div>
                 </div>
                 {% if not forloop.last %}

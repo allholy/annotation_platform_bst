@@ -10,7 +10,6 @@
             <h2>Sound annotation [{{ answered_sounds_size }} / {{ all_sounds_size }}]</h2>
         </div>
         <div class="card-body">
-            
             <form method="post" novalidate autocomplete="off">
                 {% csrf_token %}
                 <input type="hidden" name="test_sound_id" value="{{ test_sound.id }}">
@@ -34,7 +33,7 @@
                     <div class="row">
                         <div class="class-label">
                             {{ form.chosen_class.label }}
-                        </div>
+                        </div>                        
                         <div class="error-class">
                             {{ form.chosen_class.errors }}
                         </div>
@@ -91,7 +90,7 @@
                             </div>
                         </div>
                     </div>
-
+                    
                     <div class="comment-label">
                         {{form.comment.label}}
                     </div>
@@ -101,7 +100,7 @@
                     <div class="box-feedback">
                         {{form.comment}}
                     </div>
-
+                    
                     <div class="center" style="margin:30px 0px;">
                         {% if answered_sounds_size != all_sounds_size %}
                         <input type="submit" class="btn btn-dark" value="Continue with the next sound">
@@ -109,12 +108,13 @@
                         <input type="submit" class="btn btn-dark" value="Finish">
                         {% endif %}
                     </div>
-                </div>
-            </fieldset>
-        </form>
-        
+                    <div class="center">
+                        <i><a href="{% url 'classurvey:taxonomy' %}" target="_blank">Open taxonomy familiarization page in a new tab</a></i>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
     </div>
-</div>
 </div>
 
 <script>

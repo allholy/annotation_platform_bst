@@ -25,7 +25,7 @@ class TopLevel(models.Model):
     top_level_description = models.CharField(max_length=255)
 
     def __str__(self):
-        return f"<TopLevel {self.class_name}>"
+        return f"<TopLevel {self.top_level_name}>"
     
 class SoundAnswer(models.Model):
     user_id = models.CharField(max_length=50)  # random generate

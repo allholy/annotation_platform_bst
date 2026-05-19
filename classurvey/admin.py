@@ -22,6 +22,10 @@ class ClassChoiceAdmin(admin.ModelAdmin):
     list_display = ('class_key','class_name','top_level','description','examples')
 
 
+class TopLevelAdmin(admin.ModelAdmin):
+    pass
+
+
 # given data
 admin.site.register(models.ClassChoice, ClassChoiceAdmin)
 admin.site.register(models.TestSound, TestSoundAdmin)
@@ -29,3 +33,6 @@ admin.site.register(models.TestSound, TestSoundAdmin)
 # user data
 admin.site.register(models.SoundAnswer, SoundAnswerAdmin)
 admin.site.register(models.UserDetailsModel, UserDetailsAdmin)
+
+# top level class descriptions
+admin.site.register(models.TopLevel, TopLevelAdmin)
