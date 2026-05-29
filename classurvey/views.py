@@ -360,9 +360,16 @@ def results_view(request):
         'uncompleted_groups':uncompleted_groups, 'uncompleted_group_names': uncompleted_group_names
     })
 
-def data_for_export():
+def data_for_export(min_group_id=None, max_group_id=None):
     sound_annotations = []
-    for sa in SoundAnswer.objects.all():
+
+    qs = SoundAnswer.objects.all()
+    if min_group_id is not None:
+        qs = qs.filter(test_sound__sound_group__gte=min_group_id)
+    if max_group_id is not None:
+        qs = qs.filter(test_sound__sound_group__lte=max_group_id)
+
+    for sa in qs:
         user_details = UserDetailsModel.objects.filter(user_id=sa.user_id).first()
         if user_details:
             user_name = user_details.user_name
@@ -383,7 +390,9 @@ def data_for_export():
 
 @login_required
 def export_view(request):
-    data = data_for_export()
+    min_group_id = request.GET.get('min_group_id')
+    max_group_id = request.GET.get('max_group_id')
+    data = data_for_export(min_group_id=min_group_id, max_group_id=max_group_id)
     r = JsonResponse(data)
     r['Content-Disposition'] = 'attachment; filename=data.json'
     return r
