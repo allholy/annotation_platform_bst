@@ -14,5 +14,8 @@
         <p>Status: {% if group.num_answers == group.num_test_sounds %}<span style="color:green">Completed</span>{% elif group.num_answers > 0 %}<span style="color:orange">In Progress</span>{% else %}<span style="color:red">Not Started</span>{% endif %}</p>
     {% endfor %}
 </div>
+<br>
+<br>
+<a href="{% url 'export' %}?min_group_id=1000&max_group_id=1019" class="button">Download data as JSON</a>
 
 {% endblock content %}
