@@ -1,0 +1,18 @@
+{% extends 'classurvey/base.html' %}
+
+{% block content %}
+
+<div style="max-width: 60%; margin: 0 auto;">
+    <h3 class="center"> Results DCASE 2026 </h3>
+    {% for group in data %}
+        <h4>Group {{ group.group_id }}</h4>
+        <p>Number of test sounds: {{ group.num_test_sounds }}</p>
+        <p>Number of answers: {{ group.num_answers }}</p>
+        <p>Users involved: {{ group.user_names_involved|join:", " }}</p>
+        <p>First answer date: {{ group.date_first }}</p>
+        <p>Last answer date: {{ group.date_last }}</p>
+        <p>Status: {% if group.num_answers == group.num_test_sounds %}<span style="color:green">Completed</span>{% elif group.num_answers > 0 %}<span style="color:orange">In Progress</span>{% else %}<span style="color:red">Not Started</span>{% endif %}</p>
+    {% endfor %}
+</div>
+
+{% endblock content %}

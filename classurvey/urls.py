@@ -12,5 +12,6 @@ urlpatterns = [
     path('batch-end/', views.batch_end_view, name='batch_end'),
     path('data-end/', views.data_end_view, name='data_end'),
     path('results/', views.results_view, name='results'),
+    path('results_dcase2026/', views.results_dcase2026_view, name='results-dcase2026'),
     path('export/', views.export_view, name='export'),
 ]
