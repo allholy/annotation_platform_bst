@@ -362,7 +362,7 @@ def results_view(request):
 
 @login_required
 def results_dcase2026_view(request):
-    dcase2026_group_ids = (1000, 2000)
+    dcase2026_group_ids = (1000, 1063)
     group_ids = list(range(dcase2026_group_ids[0], dcase2026_group_ids[1]))
     data = []
     for group_id in group_ids:
@@ -373,17 +373,17 @@ def results_dcase2026_view(request):
         user_names_involved = UserDetailsModel.objects.filter(user_id__in=user_ids_involved).values_list('user_name', flat=True).distinct()
         date_first = SoundAnswer.objects.filter(test_sound__sound_group=group_id).order_by('date_created').first().date_created if num_answers > 0 else None
         date_last = SoundAnswer.objects.filter(test_sound__sound_group=group_id).order_by('-date_created').first().date_created if num_answers > 0 else None
-
-        data.append({
-            'group_id': group_id,
-            'num_test_sounds': num_test_sounds,
-            'num_answers': num_answers,
-            'user_names_involved': list(user_names_involved),
-            'user_ids_involved': list(user_ids_involved),
-            'date_first': date_first,
-            'date_last': date_last,
-            'dcase2026_group_ids': dcase2026_group_ids
-        })
+        if num_test_sounds:
+            data.append({
+                'group_id': group_id,
+                'num_test_sounds': num_test_sounds,
+                'num_answers': num_answers,
+                'user_names_involved': list(user_names_involved),
+                'user_ids_involved': list(user_ids_involved),
+                'date_first': date_first,
+                'date_last': date_last,
+                'dcase2026_group_ids': dcase2026_group_ids
+            })
     return render(request, 'classurvey/results_dcase2026.html',  {
         'data': data
     })
