@@ -362,7 +362,8 @@ def results_view(request):
 
 @login_required
 def results_dcase2026_view(request):
-    group_ids = list(range(1000, 1020))  # 1020 not included, intentionally
+    dcase2026_group_ids = (1000, 2000)
+    group_ids = list(range(dcase2026_group_ids[0], dcase2026_group_ids[1]))
     data = []
     for group_id in group_ids:
         test_sounds_qs = TestSound.objects.filter(sound_group=group_id)
@@ -381,6 +382,7 @@ def results_dcase2026_view(request):
             'user_ids_involved': list(user_ids_involved),
             'date_first': date_first,
             'date_last': date_last,
+            'dcase2026_group_ids': dcase2026_group_ids
         })
     return render(request, 'classurvey/results_dcase2026.html',  {
         'data': data
