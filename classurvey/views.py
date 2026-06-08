@@ -368,12 +368,12 @@ def results_dcase2026_view(request):
     for group_id in group_ids:
         test_sounds_qs = TestSound.objects.filter(sound_group=group_id)
         num_test_sounds = test_sounds_qs.count()
-        num_answers = SoundAnswer.objects.filter(test_sound__sound_group=group_id).count()
-        user_ids_involved = SoundAnswer.objects.filter(test_sound__sound_group=group_id).values_list('user_id', flat=True).distinct()  
-        user_names_involved = UserDetailsModel.objects.filter(user_id__in=user_ids_involved).values_list('user_name', flat=True).distinct()
-        date_first = SoundAnswer.objects.filter(test_sound__sound_group=group_id).order_by('date_created').first().date_created if num_answers > 0 else None
-        date_last = SoundAnswer.objects.filter(test_sound__sound_group=group_id).order_by('-date_created').first().date_created if num_answers > 0 else None
         if num_test_sounds:
+            num_answers = SoundAnswer.objects.filter(test_sound__sound_group=group_id).count()
+            user_ids_involved = SoundAnswer.objects.filter(test_sound__sound_group=group_id).values_list('user_id', flat=True).distinct()  
+            user_names_involved = UserDetailsModel.objects.filter(user_id__in=user_ids_involved).values_list('user_name', flat=True).distinct()
+            date_first = SoundAnswer.objects.filter(test_sound__sound_group=group_id).order_by('date_created').first().date_created if num_answers > 0 else None
+            date_last = SoundAnswer.objects.filter(test_sound__sound_group=group_id).order_by('-date_created').first().date_created if num_answers > 0 else None
             data.append({
                 'group_id': group_id,
                 'num_test_sounds': num_test_sounds,
