@@ -13,6 +13,7 @@
             <li>First answer date: {{ group.date_first }}</li>
             <li>Last answer date: {{ group.date_last }}</li>
             <li>Status: {% if group.num_answers == group.num_test_sounds %}<span style="color:green">Completed</span>{% elif group.num_answers > 0 %}<span style="color:orange">In Progress</span>{% else %}<span style="color:red">Not Started</span>{% endif %}</li>
+            {% if group.num_answers == 0 %}<li><a href="{% url 'classurvey:home' %}?group_number={{ group.group_id }}">Annotate this group!</a></li>{% endif %}
         </ul>
     {% endfor %}
 
