@@ -6,6 +6,11 @@ class TestSound(models.Model):
     sound_id = models.CharField(max_length=50)
     sound_class = models.CharField(max_length=50)
     sound_group = models.IntegerField()
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['sound_group'], name='testsound_group_idx'),
+        ]
     
     def __str__(self):
         return f"<TestSound {self.sound_id}>"
@@ -49,8 +54,20 @@ class SoundAnswer(models.Model):
     confidence = models.IntegerField(choices=likert_choices,default="")
     comment = models.CharField(max_length=100, null=True, blank=True, default="")
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['user_id'], name='soundanswer_user_idx'),
+            models.Index(fields=['test_sound', 'user_id'], name='soundanswer_sound_user_idx'),
+            models.Index(fields=['test_sound', 'date_created'], name='soundanswer_sound_date_idx'),
+        ]
+
 class UserDetailsModel(models.Model):
     user_id = models.CharField(max_length=50) #, unique=True
     ip_address = models.GenericIPAddressField(null=True)
     user_name = models.CharField(max_length=50, null=True, default="")
     date_created = models.DateTimeField('Creation date', auto_now_add=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['user_id'], name='userdetails_user_idx'),
+        ]
