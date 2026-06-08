@@ -72,7 +72,11 @@ def assign_group(request, user_id):
     # Assign a group
     if remaining_groups:
         # Select next group
-        selected_group = remaining_groups[0]  # random.choice(remaining_groups)
+        group_number_req_param = request.GET.get('group_number')
+        if group_number_req_param and group_number_req_param in remaining_groups:
+            selected_group = group_number_req_param
+        else:
+            selected_group = remaining_groups[0]  # random.choice(remaining_groups)
         request.session['group_number'] = selected_group
         request.session['sound_order'] = None
         print(f"Selected group: {selected_group}")
