@@ -73,8 +73,8 @@ def assign_group(request, user_id):
     if remaining_groups:
         # Select next group
         group_number_req_param = request.GET.get('group_number')
-        if group_number_req_param and group_number_req_param in remaining_groups:
-            selected_group = group_number_req_param
+        if group_number_req_param and int(group_number_req_param) in remaining_groups:
+            selected_group = int(group_number_req_param)
         else:
             selected_group = remaining_groups[0]  # random.choice(remaining_groups)
         request.session['group_number'] = selected_group
