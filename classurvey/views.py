@@ -386,10 +386,10 @@ def results_dcase2026_view(request):
                 'user_ids_involved': list(user_ids_involved),
                 'date_first': date_first,
                 'date_last': date_last,
-                'dcase2026_group_ids': dcase2026_group_ids
             })
     return render(request, 'classurvey/results_dcase2026.html',  {
-        'data': data
+        'data': data,
+        'dcase2026_group_ids': dcase2026_group_ids
     })
 
 
